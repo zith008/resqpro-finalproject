@@ -20,62 +20,62 @@ export interface EmergencyAlert {
   urgency: 'low' | 'medium' | 'high' | 'critical';
 }
 
-// Braille patterns for emergency alerts - Simplified and distinct patterns
+// Braille patterns for emergency alerts - Enhanced with haptic feedback
 export const BRAILLE_PATTERNS: Record<string, BraillePattern> = {
-  // SOS - Three short bursts (S-O-S)
+  // SOS - Three short bursts (S-O-S) with distinct haptic feedback
   sos: {
     name: 'SOS',
     description: 'Emergency distress signal',
     dots: [1, 2, 4, 1, 2, 4, 1, 2, 4], // S-O-S pattern
-    vibrationPattern: [200, 200, 200, 400, 200, 200, 200, 400, 200, 200, 200]
+    vibrationPattern: [200, 100, 200, 100, 200, 300, 200, 100, 200, 100, 200, 300, 200, 100, 200, 100, 200]
   },
   
-  // EVACUATION - Long-short-long pattern
+  // EVACUATION - Long-short-long pattern with urgent haptics
   evacuation: {
     name: 'EVACUATION',
     description: 'Immediate evacuation required',
     dots: [1, 5, 1, 2, 3, 1, 2, 4], // E-V-A pattern
-    vibrationPattern: [500, 200, 200, 200, 500, 200, 200, 200, 500]
+    vibrationPattern: [500, 200, 200, 200, 200, 200, 500, 200, 200, 200, 500]
   },
   
-  // DANGER - Rapid short bursts
+  // DANGER - Rapid short bursts with escalating intensity
   danger: {
     name: 'DANGER',
     description: 'Dangerous situation ahead',
     dots: [1, 4, 5, 1, 5, 1, 3, 4, 5], // D-A-N pattern
-    vibrationPattern: [100, 100, 100, 100, 100, 200, 100, 100, 100, 100, 100]
+    vibrationPattern: [100, 50, 100, 50, 100, 50, 100, 50, 100, 100, 100, 50, 100, 50, 100, 50, 100]
   },
   
-  // SAFE - Slow, steady pattern
+  // SAFE - Slow, steady pattern with gentle haptics
   safe: {
     name: 'SAFE',
     description: 'Area is safe',
     dots: [1, 2, 4, 1, 5, 1, 2, 4], // S-A-F pattern
-    vibrationPattern: [300, 300, 300, 500, 300, 300, 300]
+    vibrationPattern: [300, 200, 300, 200, 300, 400, 300, 200, 300]
   },
   
-  // FLOOD - Wave-like pattern
+  // FLOOD - Wave-like pattern with flowing haptics
   flood: {
     name: 'FLOOD',
     description: 'Flood warning',
     dots: [1, 2, 4, 1, 2, 3, 1, 3, 5], // F-L-O pattern
-    vibrationPattern: [200, 400, 200, 400, 200, 400, 200]
+    vibrationPattern: [200, 100, 300, 100, 200, 100, 300, 100, 200, 100, 300, 100, 200]
   },
   
-  // FIRE - Intense rapid pattern
+  // FIRE - Intense rapid pattern with crackling haptics
   fire: {
     name: 'FIRE',
     description: 'Fire emergency',
     dots: [1, 2, 4, 2, 4, 1, 2, 3, 5], // F-I-R pattern
-    vibrationPattern: [150, 150, 150, 150, 150, 150, 150, 150, 150]
+    vibrationPattern: [150, 75, 150, 75, 150, 75, 150, 75, 150, 75, 150, 75, 150, 75, 150, 75, 150]
   },
   
-  // EARTHQUAKE - Shaking pattern
+  // EARTHQUAKE - Shaking pattern with tremors
   earthquake: {
     name: 'EARTHQUAKE',
     description: 'Earthquake warning',
     dots: [1, 5, 1, 2, 4, 1, 2, 3, 5], // E-A-R pattern
-    vibrationPattern: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+    vibrationPattern: [100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100, 50, 100]
   }
 };
 
@@ -186,11 +186,14 @@ class BrailleHapticService {
   }
 
   private async vibratePattern(pattern: number[]): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       console.log('Playing Braille pattern:', pattern);
       
       // Use the pattern array directly - React Native Vibration supports this
       Vibration.vibrate(pattern);
+      
+      // Also trigger haptic feedback for enhanced experience
+      await this.playHapticPattern(pattern);
       
       // Calculate total duration including gaps
       const totalDuration = pattern.reduce((sum, duration) => sum + duration, 0);
@@ -201,6 +204,37 @@ class BrailleHapticService {
         resolve();
       }, totalDuration + 100); // Add small buffer
     });
+  }
+
+  private async playHapticPattern(pattern: number[]): Promise<void> {
+    try {
+      // Play haptic feedback synchronized with vibration pattern
+      for (let i = 0; i < pattern.length; i += 2) {
+        const vibrationDuration = pattern[i];
+        const pauseDuration = pattern[i + 1] || 0;
+        
+        // Determine haptic intensity based on vibration duration
+        if (vibrationDuration > 0) {
+          if (vibrationDuration >= 400) {
+            // Long vibration - use heavy haptic
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          } else if (vibrationDuration >= 200) {
+            // Medium vibration - use medium haptic
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          } else {
+            // Short vibration - use light haptic
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+        }
+        
+        // Wait for the pause duration before next haptic
+        if (pauseDuration > 0) {
+          await this.delay(pauseDuration);
+        }
+      }
+    } catch (error) {
+      console.error('Error playing haptic pattern:', error);
+    }
   }
 
   private delay(ms: number): Promise<void> {
@@ -259,8 +293,39 @@ class BrailleHapticService {
     const patterns = Object.keys(BRAILLE_PATTERNS);
     
     for (const patternKey of patterns) {
+      console.log(`Testing pattern: ${patternKey}`);
       await this.playBraillePattern(patternKey, 1);
-      await this.delay(1000); // Pause between patterns
+      await this.delay(1500); // Longer pause between patterns for better testing
+    }
+  }
+
+  // Enhanced test with pattern descriptions
+  public async testPatternWithDescription(patternKey: string): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+
+    const pattern = BRAILLE_PATTERNS[patternKey];
+    if (!pattern) {
+      console.warn(`Pattern '${patternKey}' not found`);
+      return;
+    }
+
+    console.log(`Testing ${pattern.name}: ${pattern.description}`);
+    await this.playBraillePattern(patternKey, 1);
+  }
+
+  // Test emergency-specific patterns
+  public async testEmergencyPatterns(): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+
+    const emergencyPatterns = ['sos', 'evacuation', 'danger', 'flood', 'fire', 'earthquake'];
+    
+    for (const patternKey of emergencyPatterns) {
+      await this.testPatternWithDescription(patternKey);
+      await this.delay(2000); // Longer pause for emergency patterns
     }
   }
 }

@@ -150,6 +150,34 @@ export const emergencyAlerts: EmergencyAlert[] = [
       'Stay informed about fire conditions'
     ],
     isActive: true
+  },
+  {
+    id: 'flood-singapore-001',
+    title: 'Flash Flood Warning',
+    description: 'Heavy rainfall causing flash flooding in Singapore. Avoid low-lying areas.',
+    severity: 'warning',
+    type: 'flood',
+    location: {
+      name: 'Singapore Central',
+      coordinates: [1.431462, 103.831442], // Your exact coordinates
+      polygon: [
+        [1.4400, 103.8400], // North-East
+        [1.4400, 103.8200], // North-West  
+        [1.4200, 103.8200], // South-West
+        [1.4200, 103.8400], // South-East
+        [1.4400, 103.8400]  // Close the polygon
+      ]
+    },
+    issuedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), // 3 hours from now
+    instructions: [
+      'Avoid low-lying areas and underpasses',
+      'Do not walk or drive through flood waters',
+      'Stay indoors if possible',
+      'Monitor local weather updates',
+      'Keep emergency supplies ready'
+    ],
+    isActive: true
   }
 ];
 

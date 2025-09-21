@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
-import { Text, Card, Chip, Button, useTheme, FAB } from 'react-native-paper';
+import { Text, Card, Chip, Button, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -100,6 +100,58 @@ export default function AlertsScreen() {
       await brailleHapticService.playEmergencyAlert(brailleAlert);
     } catch (error) {
       console.error('Error triggering Braille haptic alert:', error);
+    }
+  };
+
+  const testAlertVibration = async (alert: EmergencyAlert) => {
+    try {
+      // Map alert type to Braille pattern
+      let brailleType: 'sos' | 'evacuation' | 'danger' | 'safe' | 'flood' | 'fire' | 'earthquake' = 'danger';
+      
+      switch (alert.type) {
+        case 'flood':
+          brailleType = 'flood';
+          break;
+        case 'tornado':
+        case 'hurricane':
+          brailleType = 'evacuation';
+          break;
+        case 'earthquake':
+          brailleType = 'earthquake';
+          break;
+        case 'wildfire':
+          brailleType = 'fire';
+          break;
+        case 'severe-weather':
+          brailleType = 'danger';
+          break;
+        default:
+          brailleType = 'danger';
+      }
+
+      // Map severity to urgency for repeat count
+      let urgency: 'low' | 'medium' | 'high' | 'critical' = 'medium';
+      switch (alert.severity) {
+        case 'emergency':
+          urgency = 'critical';
+          break;
+        case 'warning':
+          urgency = 'high';
+          break;
+        case 'watch':
+          urgency = 'medium';
+          break;
+        case 'advisory':
+          urgency = 'low';
+          break;
+      }
+
+      // Play the specific Braille pattern for this alert type with enhanced haptics
+      console.log(`Testing enhanced vibration for ${alert.type} (${brailleType}) with ${urgency} urgency`);
+      await brailleHapticService.testPatternWithDescription(brailleType);
+      
+    } catch (error) {
+      console.error('Error testing alert vibration:', error);
     }
   };
 
@@ -309,9 +361,21 @@ export default function AlertsScreen() {
                 </View>
 
                 <View style={styles.alertFooter}>
-                  <Text variant="bodySmall" style={styles.expiresText}>
-                    Expires: {new Date(alert.expiresAt).toLocaleString()}
-                  </Text>
+                  <View style={styles.footerRow}>
+                    <Text variant="bodySmall" style={styles.expiresText}>
+                      Expires: {new Date(alert.expiresAt).toLocaleString()}
+                    </Text>
+                    <Button
+                      mode="outlined"
+                      compact
+                      onPress={() => testAlertVibration(alert)}
+                      style={styles.vibrationButton}
+                      labelStyle={styles.vibrationButtonLabel}
+                      icon="vibrate"
+                    >
+                      Test Vibration
+                    </Button>
+                  </View>
                 </View>
               </Card.Content>
             </Card>
@@ -319,12 +383,6 @@ export default function AlertsScreen() {
         )}
       </ScrollView>
 
-      <FAB
-        icon="bell-alert"
-        style={styles.fab}
-        onPress={simulateNearbyEmergency}
-        label="Test Alert"
-      />
     </SafeAreaView>
   );
 }
@@ -449,15 +507,22 @@ const styles = StyleSheet.create({
     borderTopColor: '#E5E5E7',
     paddingTop: 12,
   },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   expiresText: {
     color: '#666',
     fontStyle: 'italic',
+    flex: 1,
   },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#FF3B30',
+  vibrationButton: {
+    borderColor: '#dd0436',
+    borderWidth: 1,
+  },
+  vibrationButtonLabel: {
+    color: '#dd0436',
+    fontSize: 12,
   },
 });
