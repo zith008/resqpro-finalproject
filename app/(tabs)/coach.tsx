@@ -112,104 +112,100 @@ export default function CoachScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
-        <View style={styles.headerContent}>
-          <MaterialCommunityIcons 
-            name="robot" 
-            size={20} 
-            color={theme.colors.primary} 
-          />
-          <View style={styles.titleContainer}>
-            <Text variant="titleLarge" style={[styles.headerTitle, { color: theme.colors.onSurface }]}>
-              AI Coach
-            </Text>
-            {useOfflineMode && modelLoaded && (
-              <View style={[styles.offlineIndicator, { backgroundColor: theme.colors.primaryContainer }]}>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+          {/* Header */}
+          <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
+            <View style={styles.headerContent}>
+              <MaterialCommunityIcons 
+                name="robot" 
+                size={20} 
+                color={theme.colors.primary} 
+              />
+              <View style={styles.titleContainer}>
+                <Text variant="titleLarge" style={[styles.headerTitle, { color: theme.colors.onSurface }]}>
+                  AI Coach
+                </Text>
+                {useOfflineMode && modelLoaded && (
+                  <View style={[styles.offlineIndicator, { backgroundColor: theme.colors.primaryContainer }]}>
+                    <MaterialCommunityIcons 
+                      name="wifi-off" 
+                      size={10} 
+                      color={theme.colors.onPrimaryContainer} 
+                    />
+                    <Text variant="labelSmall" style={[styles.offlineText, { color: theme.colors.onPrimaryContainer }]}>
+                      Offline
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+            <View style={styles.headerButtons}>
+              <Button
+                mode="text"
+                onPress={takePhoto}
+                textColor={theme.colors.primary}
+                compact
+                style={styles.cameraButton}
+                icon="camera"
+              >
+                Scan Room
+              </Button>
+              <Button
+                mode="text"
+                onPress={() => setShowClearDialog(true)}
+                textColor={theme.colors.onSurfaceVariant}
+                compact
+                style={styles.clearButton}
+              >
+                Clear
+              </Button>
+            </View>
+          </View>
+
+          {/* Chat Messages */}
+          <ScrollView 
+            ref={scrollViewRef}
+            style={styles.messagesContainer}
+            contentContainerStyle={styles.messagesContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {messages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+            
+            {isLoading && (
+              <View style={styles.loadingContainer}>
                 <MaterialCommunityIcons 
-                  name="wifi-off" 
-                  size={10} 
-                  color={theme.colors.onPrimaryContainer} 
+                  name="robot" 
+                  size={24} 
+                  color={theme.colors.primary} 
                 />
-                <Text variant="labelSmall" style={[styles.offlineText, { color: theme.colors.onPrimaryContainer }]}>
-                  Offline
+                <Text variant="bodyMedium" style={[styles.loadingText, { color: theme.colors.onSurfaceVariant }]}>
+                  ResQ Pro is thinking...
                 </Text>
               </View>
             )}
-          </View>
-        </View>
-        <View style={styles.headerButtons}>
-          <Button
-            mode="text"
-            onPress={takePhoto}
-            textColor={theme.colors.primary}
-            compact
-            style={styles.cameraButton}
-            icon="camera"
-          >
-            Scan Room
-          </Button>
-          <Button
-            mode="text"
-            onPress={() => setShowClearDialog(true)}
-            textColor={theme.colors.onSurfaceVariant}
-            compact
-            style={styles.clearButton}
-          >
-            Clear
-          </Button>
-        </View>
-      </View>
 
-      {/* Chat Messages */}
-      <ScrollView 
-        ref={scrollViewRef}
-        style={styles.messagesContainer}
-        contentContainerStyle={styles.messagesContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
-        
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <MaterialCommunityIcons 
-              name="robot" 
-              size={24} 
-              color={theme.colors.primary} 
-            />
-            <Text variant="bodyMedium" style={[styles.loadingText, { color: theme.colors.onSurfaceVariant }]}>
-              ResQ Pro is thinking...
-            </Text>
-          </View>
-        )}
+            {/* Show quick suggestions only for the first message */}
+            {messages.length === 1 && !isLoading && (
+              <QuickSuggestions 
+                onSuggestionPress={sendMessage}
+                disabled={isLoading}
+              />
+            )}
+          </ScrollView>
 
-        {/* Show quick suggestions only for the first message */}
-        {messages.length === 1 && !isLoading && (
-          <QuickSuggestions 
-            onSuggestionPress={sendMessage}
+          {/* Chat Input */}
+          <ChatInput 
+            onSendMessage={sendMessage} 
             disabled={isLoading}
           />
-        )}
-      </ScrollView>
-
-      {/* Chat Input with KeyboardAvoidingView */}
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View>
-            <ChatInput 
-              onSendMessage={sendMessage} 
-              disabled={isLoading}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
           {/* Error Snackbar */}
           <Snackbar
             visible={!!error}
@@ -298,7 +294,9 @@ export default function CoachScreen() {
               </View>
             </View>
           </Modal>
-    </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
