@@ -14,11 +14,19 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera for safety scanning to analyze your environment for potential hazards and emergency preparedness.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save safety scan results and images."
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save safety scan results and images.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area, even when the app is in the background.",
+        "NSLocationAlwaysUsageDescription": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area, even when the app is in the background."
       }
     },
     "android": {
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +50,16 @@
           "photosPermission": "Allow ResQ Pro to save safety scan images to your photo library.",
           "savePhotosPermission": "Allow ResQ Pro to save safety scan images to your photo library.",
           "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area, even when the app is in the background.",
+          "locationAlwaysPermission": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area, even when the app is in the background.",
+          "locationWhenInUsePermission": "This app uses your location to provide location-based emergency alerts and show relevant safety information for your area.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
         }
       ]
     ],

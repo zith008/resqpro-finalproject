@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, Dimensions, StatusBar } from 'react-native';
 import { Text, Card, Snackbar, useTheme, Button } from 'react-native-paper';
-import { Flame } from 'lucide-react-native';
+import { Flame, Shield, Target, AlertTriangle } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '@/store/useGameStore';
 import { XPProgressRing } from '@/components/XPProgressRing';
 import { QuestItem } from '@/components/QuestItem';
@@ -38,6 +39,16 @@ export default function HomeScreen() {
 
   useEffect(() => {
     checkAndUpdateStreak();
+    
+    // Set status bar style for this screen
+    StatusBar.setBarStyle('light-content', true);
+    StatusBar.setBackgroundColor('#dd0436', true);
+    
+    // Cleanup function to reset status bar when leaving screen
+    return () => {
+      StatusBar.setBarStyle('dark-content', true);
+      StatusBar.setBackgroundColor('#ffffff', true);
+    };
   }, []);
 
   const simulateNearbyEmergency = async () => {
@@ -174,99 +185,137 @@ export default function HomeScreen() {
   const greeting = currentHour < 12 ? 'Good Morning' : 
                    currentHour < 17 ? 'Good Afternoon' : 'Good Evening';
 
+  // Debug logging
+  console.log('Home Screen Debug:', {
+    questsCount: quests.length,
+    dailyCompletions: Object.keys(dailyCompletions).length,
+    totalXP,
+    currentLevel,
+    journeyProgress: useGameStore.getState().journeyProgress
+  });
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView style={styles.scrollView}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text variant="headlineMedium" style={{ fontWeight: 'bold' }}>
-            {greeting}!
-          </Text>
-          {streak > 0 && (
-            <View style={styles.streakContainer}>
-              <Flame size={20} color={theme.colors.secondary} />
-              <Text 
-                variant="titleMedium" 
-                style={{ 
-                  color: theme.colors.secondary,
-                  fontWeight: '600',
-                  marginLeft: 4
-                }}
-              >
-                {streak}-day streak
+    <SafeAreaView style={[styles.container, { backgroundColor: '#dd0436' }]} edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor="#dd0436" translucent={false} />
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Header with Gradient */}
+        <LinearGradient
+          colors={['#dd0436', '#b8002a']}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <Text variant="headlineMedium" style={styles.greeting}>
+                {greeting}!
+              </Text>
+              <Text variant="bodyLarge" style={styles.subtitle}>
+                Ready to build your emergency preparedness?
               </Text>
             </View>
-          )}
-        </View>
+            {streak > 0 && (
+              <View style={styles.streakContainer}>
+                <Flame size={24} color="#ffba00" />
+                <Text variant="titleMedium" style={styles.streakText}>
+                  {streak}-day streak
+                </Text>
+              </View>
+            )}
+          </View>
+        </LinearGradient>
 
-        {/* XP Progress Ring */}
-        <View style={styles.progressContainer}>
-          <XPProgressRing 
-            progress={xpProgress}
-            level={currentLevel}
-            size={140}
-          />
-          <Text 
-            variant="bodyLarge" 
-            style={{ 
-              marginTop: 12,
-              color: theme.colors.onSurfaceVariant,
-              textAlign: 'center'
-            }}
-          >
-            {totalXP % 100}/100 XP to next level
-          </Text>
-        </View>
+        {/* XP Progress Section */}
+        <Card style={styles.progressCard}>
+          <Card.Content style={styles.progressContent}>
+            <View style={styles.progressHeader}>
+              <Target size={24} color="#dd0436" />
+              <Text variant="titleLarge" style={styles.progressTitle}>
+                Your Progress
+              </Text>
+            </View>
+            <View style={styles.progressRingContainer}>
+              <XPProgressRing 
+                progress={xpProgress}
+                level={currentLevel}
+                size={100}
+              />
+              <View style={styles.progressInfo}>
+                <Text variant="headlineSmall" style={styles.levelText}>
+                  Level {currentLevel}
+                </Text>
+                <Text variant="bodyMedium" style={styles.xpText}>
+                  {totalXP % 100}/100 XP to next level
+                </Text>
+                <Text variant="bodySmall" style={styles.totalXpText}>
+                  {totalXP} total XP
+                </Text>
+              </View>
+            </View>
+          </Card.Content>
+        </Card>
 
         {/* Journey Map */}
-        <JourneyMapCurved />
+        <Card style={styles.journeyMapCard}>
+          <Card.Content style={styles.journeyMapContent}>
+            <View style={styles.journeyMapHeader}>
+              <Target size={24} color="#dd0436" />
+              <Text variant="titleLarge" style={styles.journeyMapTitle}>
+                Your Preparedness Journey
+              </Text>
+            </View>
+            <Text variant="bodyMedium" style={styles.journeyMapSubtitle}>
+              Track your progress through different disaster preparedness milestones
+            </Text>
+            <View style={styles.journeyMapContainer}>
+              <JourneyMapCurved />
+            </View>
+          </Card.Content>
+        </Card>
 
         {/* Today's Quests */}
         <Card style={styles.questsCard}>
-          <Card.Content>
-            <Text 
-              variant="titleLarge" 
-              style={{ 
-                fontWeight: 'bold',
-                marginBottom: 16,
-                color: theme.colors.onSurface
-              }}
-            >
-              Today's Quests
+          <Card.Content style={styles.questsContent}>
+            <View style={styles.questsHeader}>
+              <Shield size={24} color="#dd0436" />
+              <Text variant="titleLarge" style={styles.questsTitle}>
+                Today's Quests
+              </Text>
+            </View>
+            <Text variant="bodyMedium" style={styles.questsSubtitle}>
+              Complete these tasks to build your emergency preparedness skills
             </Text>
             
-            {quests.map(quest => (
-              <QuestItem
-                key={quest.id}
-                quest={quest}
-                completed={dailyCompletions[quest.id] || false}
-                onComplete={() => handleQuestComplete(quest.id, quest.xpValue)}
-              />
-            ))}
+            <View style={styles.questsList}>
+              {quests.length > 0 ? quests.map(quest => (
+                <QuestItem
+                  key={quest.id}
+                  quest={quest}
+                  completed={dailyCompletions[quest.id] || false}
+                  onComplete={() => handleQuestComplete(quest.id, quest.xpValue)}
+                />
+              )) : (
+                <Text style={{ textAlign: 'center', color: '#666', padding: 20 }}>
+                  No quests available
+                </Text>
+              )}
+            </View>
           </Card.Content>
         </Card>
 
         {/* Emergency Simulation */}
         <Card style={styles.emergencyCard}>
-          <Card.Content>
-            <Text 
-              variant="titleLarge" 
-              style={{ 
-                fontWeight: 'bold',
-                marginBottom: 8,
-                color: theme.colors.onSurface
-              }}
-            >
-              🚨 Emergency Demo
-            </Text>
-            <Text 
-              variant="bodyMedium" 
-              style={{ 
-                marginBottom: 16,
-                color: theme.colors.onSurfaceVariant
-              }}
-            >
-              Test location-based emergency alerts
+          <Card.Content style={styles.emergencyContent}>
+            <View style={styles.emergencyHeader}>
+              <AlertTriangle size={24} color="#b8002a" />
+              <Text variant="titleLarge" style={styles.emergencyTitle}>
+                Emergency Demo
+              </Text>
+            </View>
+            <Text variant="bodyMedium" style={styles.emergencySubtitle}>
+              Test location-based emergency alerts and see how the system responds to real-world scenarios
             </Text>
             
             <Button
@@ -274,12 +323,13 @@ export default function HomeScreen() {
               onPress={simulateNearbyEmergency}
               loading={simulating}
               disabled={simulating}
-              buttonColor="#FF3B30"
+              buttonColor="#b8002a"
               textColor="#FFFFFF"
               style={styles.emergencyButton}
               icon="bell-alert"
+              contentStyle={styles.emergencyButtonContent}
             >
-              {simulating ? 'Simulating...' : 'Simulate Nearby Emergency'}
+              {simulating ? 'Simulating...' : 'Test Emergency Alert'}
             </Button>
           </Card.Content>
         </Card>
@@ -310,37 +360,225 @@ export default function HomeScreen() {
   );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f8f9fa',
   },
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+    minHeight: '100%',
+  },
+  headerGradient: {
+    paddingTop: 0,
+    paddingBottom: 16,
+  },
   header: {
-    padding: 20,
-    paddingBottom: 10,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  headerContent: {
+    flex: 1,
+  },
+  greeting: {
+    color: '#ffffff',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  subtitle: {
+    color: '#ffffff',
+    opacity: 0.9,
+    fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
   },
   streakContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginLeft: 16,
   },
-  progressContainer: {
+  streakText: {
+    color: '#ffffff',
+    fontFamily: 'Poppins_600SemiBold',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  progressCard: {
+    marginHorizontal: 16,
+    marginTop: -10,
+    marginBottom: 12,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  progressContent: {
+    padding: 16,
+  },
+  progressHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 20,
+    marginBottom: 12,
+  },
+  progressTitle: {
+    color: '#2c3e50',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  progressRingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  progressInfo: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  levelText: {
+    color: '#dd0436',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  xpText: {
+    color: '#666',
+    marginBottom: 2,
+    fontFamily: 'Poppins_400Regular',
+  },
+  totalXpText: {
+    color: '#999',
+    fontSize: 12,
+    fontFamily: 'Poppins_400Regular',
   },
   questsCard: {
-    margin: 20,
-    marginTop: 10,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 12,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  questsContent: {
+    padding: 16,
+  },
+  questsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  questsTitle: {
+    color: '#2c3e50',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  questsSubtitle: {
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 20,
+    fontFamily: 'Poppins_400Regular',
+  },
+  questsList: {
+    gap: 12,
   },
   emergencyCard: {
-    margin: 20,
-    marginTop: 10,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 16,
+    borderRadius: 16,
     borderLeftWidth: 4,
-    borderLeftColor: '#FF3B30',
+    borderLeftColor: '#b8002a',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  emergencyContent: {
+    padding: 16,
+  },
+  emergencyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  emergencyTitle: {
+    color: '#2c3e50',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  emergencySubtitle: {
+    color: '#666',
+    marginBottom: 16,
+    lineHeight: 20,
+    fontFamily: 'Poppins_400Regular',
   },
   emergencyButton: {
+    borderRadius: 12,
+  },
+  emergencyButtonContent: {
+    paddingVertical: 8,
+  },
+  journeyMapCard: {
+    marginHorizontal: 16,
     marginTop: 8,
+    marginBottom: 12,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  journeyMapContent: {
+    padding: 16,
+  },
+  journeyMapHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  journeyMapTitle: {
+    color: '#2c3e50',
+    fontFamily: 'Poppins_700Bold',
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  journeyMapSubtitle: {
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 20,
+    fontFamily: 'Poppins_400Regular',
+  },
+  journeyMapContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    overflow: 'hidden',
   },
 });

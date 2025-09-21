@@ -24,6 +24,7 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
@@ -33,6 +34,7 @@ export default function TabLayout() {
         name="badges"
         options={{
           title: 'Badges',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="medal" size={size} color={color} />
           ),
@@ -43,6 +45,7 @@ export default function TabLayout() {
         name="coach"
         options={{
           title: 'AI Coach',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="robot" size={size} color={color} />
           ),
@@ -52,6 +55,7 @@ export default function TabLayout() {
         name="alerts"
         options={{
           title: 'Alerts',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="bell" size={size} color={color} />
           ),
@@ -61,6 +65,7 @@ export default function TabLayout() {
         name="kit"
         options={{
           title: 'Offline Kit',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="bag-personal" size={size} color={color} />
           ),
@@ -70,6 +75,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Settings',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cog" size={size} color={color} />
           ),

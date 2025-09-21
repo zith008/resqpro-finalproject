@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
+    fontFamily: 'Poppins_500Medium',
     fontWeight: '500',
   },
 });

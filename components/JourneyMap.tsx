@@ -1,4 +1,4 @@
-nt import React, { useEffect } from 'react';
+ import React, { useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Image } from 'react-native';
 import Animated, {
   useSharedValue,

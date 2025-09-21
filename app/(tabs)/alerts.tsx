@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
 import { Text, Card, Chip, Button, useTheme, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { AlertTriangle } from 'lucide-react-native';
 import { emergencyAlerts, EmergencyAlert } from '@/data/emergencyAlerts';
 import { HapticFeedback, getHapticForSeverity, getHapticForType } from '@/utils/haptics';
 import * as Location from 'expo-location';
@@ -162,16 +164,34 @@ export default function AlertsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
-        <Text variant="headlineMedium" style={styles.title}>Emergency Alerts</Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          {alerts.length} active alert{alerts.length !== 1 ? 's' : ''}
-        </Text>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: '#dd0436' }]} edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor="#dd0436" />
+      
+      {/* Header Banner */}
+      <LinearGradient
+        colors={['#dd0436', '#b8002a']}
+        style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.iconContainer}>
+              <AlertTriangle size={24} color="#ffffff" />
+            </View>
+            <View style={styles.titleContainer}>
+              <Text variant="headlineMedium" style={styles.headerTitle}>Emergency Alerts</Text>
+              <Text variant="bodyMedium" style={styles.headerSubtitle}>
+                {alerts.length} active alert{alerts.length !== 1 ? 's' : ''}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
 
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -256,20 +276,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerGradient: {
+    paddingTop: 0,
+    paddingBottom: 16,
+  },
   header: {
-    padding: 20,
-    paddingBottom: 10,
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
-  title: {
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: '#ffffff',
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 2,
   },
-  subtitle: {
-    color: '#666',
+  headerSubtitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
   },
   scrollView: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   emptyCard: {
     marginTop: 40,

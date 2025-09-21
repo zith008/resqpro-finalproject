@@ -6,11 +6,17 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  Dimensions,
 } from 'react-native'
 import { TextInput, Button, Card } from 'react-native-paper'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { LinearGradient } from 'expo-linear-gradient'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useAuth } from '../../hooks/useAuth'
 import { useRouter } from 'expo-router'
+
+const { width, height } = Dimensions.get('window')
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -19,6 +25,7 @@ export default function LoginScreen() {
   const [error, setError] = useState('')
   const { signIn } = useAuth()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -50,140 +57,336 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#dd0436', '#b8002a']}
+        style={styles.gradientBackground}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Welcome Back!</Text>
-            <Text style={styles.subtitle}>Sign in to continue your emergency preparedness journey</Text>
-          </View>
-
-          <Card style={styles.card}>
-            <Card.Content style={styles.cardContent}>
-              <TextInput
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                mode="outlined"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={styles.input}
-              />
-
-              <TextInput
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                mode="outlined"
-                secureTextEntry
-                autoCapitalize="none"
-                style={styles.input}
-              />
-
-              {error ? (
-                <Text style={styles.errorText}>{error}</Text>
-              ) : null}
-
-              <Button
-                mode="contained"
-                onPress={handleLogin}
-                loading={loading}
-                disabled={loading}
-                style={styles.loginButton}
-                buttonColor="#007AFF"
-              >
-                Sign In
-              </Button>
-
-              <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Don't have an account? </Text>
-                <Button
-                  mode="text"
-                  onPress={goToSignup}
-                  textColor="#007AFF"
-                >
-                  Sign Up
-                </Button>
+        <SafeAreaView style={styles.safeArea}>
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardView}
+          >
+            <ScrollView 
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
+              {/* Header Section */}
+              <View style={styles.header}>
+                <View style={styles.logoContainer}>
+                  <MaterialCommunityIcons 
+                    name="shield-check" 
+                    size={60} 
+                    color="#ffffff" 
+                  />
+                  <Text style={styles.appName}>ResQ Pro</Text>
+                </View>
+                <Text style={styles.welcomeText}>Welcome Back!</Text>
+                <Text style={styles.subtitle}>
+                  Sign in to continue your emergency preparedness journey
+                </Text>
               </View>
 
-              <Button
-                mode="outlined"
-                onPress={() => router.replace('/(tabs)/home')}
-                style={styles.skipButton}
-              >
-                Continue as Guest
-              </Button>
-            </Card.Content>
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+              {/* Decorative Elements */}
+              <View style={styles.decorativeContainer}>
+                <View style={[styles.decorativeCircle, styles.circle1]} />
+                <View style={[styles.decorativeCircle, styles.circle2]} />
+                <View style={[styles.decorativeCircle, styles.circle3]} />
+              </View>
+
+              {/* Form Card */}
+              <Card style={styles.formCard} elevation={4}>
+                <Card.Content style={styles.formContent}>
+                  <View style={styles.formHeader}>
+                    <Text style={styles.formTitle}>Sign In</Text>
+                    <Text style={styles.formSubtitle}>Enter your credentials to continue</Text>
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                      <MaterialCommunityIcons 
+                        name="email-outline" 
+                        size={20} 
+                        color="#dd0436" 
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        label="Email Address"
+                        value={email}
+                        onChangeText={setEmail}
+                        mode="outlined"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        style={styles.input}
+                        outlineColor="#e0e0e0"
+                        activeOutlineColor="#dd0436"
+                        contentStyle={styles.inputContent}
+                      />
+                    </View>
+
+                    <View style={styles.inputWrapper}>
+                      <MaterialCommunityIcons 
+                        name="lock-outline" 
+                        size={20} 
+                        color="#dd0436" 
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        label="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        mode="outlined"
+                        secureTextEntry
+                        autoCapitalize="none"
+                        style={styles.input}
+                        outlineColor="#e0e0e0"
+                        activeOutlineColor="#dd0436"
+                        contentStyle={styles.inputContent}
+                      />
+                    </View>
+
+                    {error ? (
+                      <View style={styles.errorContainer}>
+                        <MaterialCommunityIcons 
+                          name="alert-circle-outline" 
+                          size={16} 
+                          color="#dd0436" 
+                        />
+                        <Text style={styles.errorText}>{error}</Text>
+                      </View>
+                    ) : null}
+
+                    <Button
+                      mode="contained"
+                      onPress={handleLogin}
+                      loading={loading}
+                      disabled={loading}
+                      style={styles.signInButton}
+                      buttonColor="#dd0436"
+                      labelStyle={styles.buttonLabel}
+                      contentStyle={styles.buttonContent}
+                    >
+                      {loading ? 'Signing In...' : 'Sign In'}
+                    </Button>
+                  </View>
+
+                  <View style={styles.divider}>
+                    <View style={styles.dividerLine} />
+                    <Text style={styles.dividerText}>or</Text>
+                    <View style={styles.dividerLine} />
+                  </View>
+
+                  <View style={styles.actionButtons}>
+                    <Button
+                      mode="outlined"
+                      onPress={goToSignup}
+                      style={styles.signUpButton}
+                      labelStyle={styles.outlinedButtonLabel}
+                      contentStyle={styles.outlinedButtonContent}
+                    >
+                      Create Account
+                    </Button>
+
+                  </View>
+                </Card.Content>
+              </Card>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+  },
+  gradientBackground: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
+    paddingHorizontal: 20,
     justifyContent: 'center',
-    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 80,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    paddingBottom: 10,
   },
-  title: {
-    fontSize: 32,
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  appName: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
+    marginTop: 10,
+    letterSpacing: 1,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#ffffff',
     marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
     lineHeight: 22,
+    paddingHorizontal: 20,
   },
-  card: {
-    elevation: 4,
+  decorativeContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: height * 0.4,
+    zIndex: 0,
   },
-  cardContent: {
+  decorativeCircle: {
+    position: 'absolute',
+    borderRadius: 1000,
+    opacity: 0.1,
+  },
+  circle1: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#ffba00',
+    top: 50,
+    right: -30,
+  },
+  circle2: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#ff8e00',
+    top: 120,
+    left: -20,
+  },
+  circle3: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#ffffff',
+    top: 200,
+    right: 50,
+  },
+  formCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 24,
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  formContent: {
     padding: 24,
   },
+  formHeader: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#dd0436',
+    marginBottom: 8,
+  },
+  formSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  inputWrapper: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  inputIcon: {
+    position: 'absolute',
+    left: 16,
+    top: 16,
+    zIndex: 1,
+  },
   input: {
+    backgroundColor: '#ffffff',
+    paddingLeft: 50,
+  },
+  inputContent: {
+    fontSize: 16,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffe6e6',
+    padding: 12,
+    borderRadius: 8,
     marginBottom: 16,
   },
   errorText: {
-    color: '#FF3B30',
-    textAlign: 'center',
-    marginBottom: 16,
+    color: '#dd0436',
+    fontSize: 14,
+    marginLeft: 8,
+    flex: 1,
+  },
+  signInButton: {
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  buttonContent: {
+    paddingVertical: 8,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#e0e0e0',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: '#666',
     fontSize: 14,
   },
-  loginButton: {
-    marginTop: 8,
-    marginBottom: 16,
+  actionButtons: {
+    gap: 12,
   },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
+  signUpButton: {
+    borderRadius: 12,
+    borderColor: '#dd0436',
+    borderWidth: 2,
   },
-  signupText: {
+  outlinedButtonLabel: {
     fontSize: 16,
-    color: '#666',
+    fontWeight: '600',
+    color: '#dd0436',
   },
-  skipButton: {
-    marginTop: 8,
+  outlinedButtonContent: {
+    paddingVertical: 8,
   },
 })

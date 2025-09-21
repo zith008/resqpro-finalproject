@@ -104,7 +104,7 @@ export default function SettingsScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}> 
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -281,7 +281,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 20,
+    flexGrow: 1,
   },
   card: {
     elevation: 4,

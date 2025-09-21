@@ -74,12 +74,14 @@ export const XPProgressRing: React.FC<XPProgressRingProps> = ({
         justifyContent: 'center' 
       }}>
         <Text variant="headlineSmall" style={{ 
-          fontWeight: 'bold',
+          fontFamily: 'Poppins_700Bold',
+          fontWeight: '700',
           color: theme.colors.primary 
         }}>
           {level}
         </Text>
         <Text variant="bodySmall" style={{ 
+          fontFamily: 'Poppins_400Regular',
           color: theme.colors.onSurfaceVariant 
         }}>
           Level

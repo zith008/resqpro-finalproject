@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, StatusBar, TouchableOpacity } from 'react-native';
 import { Text, Card, IconButton, useTheme, Banner, ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { getNetworkStateAsync } from 'expo-network';
 import MarkdownDisplay from 'react-native-markdown-display';
-import { ArrowLeft, Shield } from 'lucide-react-native';
+import { ArrowLeft, Shield, BookOpen } from 'lucide-react-native';
 import { getGuideContent } from '@/utils/guides';
 import { Guide } from '@/types/guides';
 
@@ -447,6 +448,30 @@ export default function GuideScreen() {
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
+  // Get gradient colors based on guide type
+  const getGradientColors = (guideSlug: string): [string, string] => {
+    switch (guideSlug) {
+      case 'first-aid':
+        return ['#e53e3e', '#c53030']; // Red gradient for medical
+      case 'water-purification':
+        return ['#3182ce', '#2c5282']; // Blue gradient for water
+      case 'fire-safety':
+        return ['#f56565', '#e53e3e']; // Orange-red gradient for fire
+      case 'shelter-building':
+        return ['#38a169', '#2f855a']; // Green gradient for shelter
+      case 'food-storage':
+        return ['#d69e2e', '#b7791f']; // Yellow gradient for food
+      case 'emergency-communication':
+        return ['#805ad5', '#6b46c1']; // Purple gradient for communication
+      case 'navigation':
+        return ['#319795', '#2c7a7b']; // Teal gradient for navigation
+      case 'wilderness-survival':
+        return ['#2d3748', '#1a202c']; // Dark gradient for wilderness
+      default:
+        return ['#4a5568', '#2d3748']; // Default gray gradient
+    }
+  };
+
   useEffect(() => {
     checkNetworkStatus();
     loadGuide();
@@ -488,19 +513,42 @@ export default function GuideScreen() {
     return null;
   }
 
+  const gradientColors = getGradientColors(slug || '');
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
-        <IconButton
-          icon={({ size, color }) => <ArrowLeft size={size} color={color} />}
-          size={24}
-          onPress={() => router.back()}
-          style={styles.backButton}
-        />
-        <Text variant="titleLarge" style={styles.title} numberOfLines={1}>
-          {slug ? slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Guide'}
-        </Text>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: gradientColors[0] }]} edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor={gradientColors[0]} />
+      
+      {/* Beautiful Header with Gradient */}
+      <LinearGradient
+        colors={gradientColors}
+        style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <ArrowLeft size={24} color="#ffffff" />
+          </TouchableOpacity>
+          
+          <View style={styles.headerContent}>
+            <View style={styles.iconContainer}>
+              <BookOpen size={24} color="#ffffff" />
+            </View>
+            <View style={styles.titleContainer}>
+              <Text variant="headlineMedium" style={styles.headerTitle} numberOfLines={1}>
+                {slug ? slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Guide'}
+              </Text>
+              <Text variant="bodyMedium" style={styles.headerSubtitle}>
+                Emergency Preparedness Guide
+              </Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
 
       {/* Offline Banner */}
       {!isOnline && (
@@ -527,12 +575,13 @@ export default function GuideScreen() {
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       >
-        <Card style={[styles.contentCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
+        <Card style={[styles.contentCard, { backgroundColor: '#ffffff' }]} elevation={4}>
+          <Card.Content style={styles.cardContent}>
             <MarkdownDisplay style={{
               body: {
-                color: theme.colors.onSurface,
+                color: '#2d3748',
                 fontSize: 16,
                 lineHeight: 24,
               },
@@ -598,27 +647,48 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerGradient: {
+    paddingTop: 0,
+    paddingBottom: 16,
+  },
   header: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.18,
-    shadowRadius: 1.0,
+    marginLeft: 12,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
   },
   backButton: {
-    margin: 0,
-  },
-  title: {
-    flex: 1,
-    marginLeft: 8,
-    fontWeight: 'bold',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
     paddingTop: 4,
   },
   scrollView: {
@@ -626,8 +696,13 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 16,
+    paddingBottom: 20,
   },
   contentCard: {
-    elevation: 0,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  cardContent: {
+    padding: 20,
   },
 });
