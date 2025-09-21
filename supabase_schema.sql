@@ -133,6 +133,20 @@ CREATE TABLE public.emergency_alerts (
   expires_at TIMESTAMP WITH TIME ZONE
 );
 
+-- Safety scan results table
+CREATE TABLE public.safety_scan_results (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  image_url TEXT, -- URL to the scanned image (stored in Supabase Storage)
+  risk_level TEXT NOT NULL CHECK (risk_level IN ('low', 'medium', 'high')),
+  summary TEXT NOT NULL,
+  suggestions JSONB NOT NULL, -- Array of suggestion strings
+  analysis_data JSONB, -- Full analysis data for future use
+  location_name TEXT, -- Optional: user can name the scanned location
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_user_game_state_user_id ON public.user_game_state(user_id);
 CREATE INDEX idx_daily_completions_user_id ON public.daily_completions(user_id);
@@ -143,6 +157,9 @@ CREATE INDEX idx_user_progress_user_id ON public.user_progress(user_id);
 CREATE INDEX idx_user_progress_metric_type ON public.user_progress(metric_type);
 CREATE INDEX idx_emergency_alerts_user_id ON public.emergency_alerts(user_id);
 CREATE INDEX idx_emergency_alerts_created_at ON public.emergency_alerts(created_at);
+CREATE INDEX idx_safety_scan_results_user_id ON public.safety_scan_results(user_id);
+CREATE INDEX idx_safety_scan_results_created_at ON public.safety_scan_results(created_at);
+CREATE INDEX idx_safety_scan_results_risk_level ON public.safety_scan_results(risk_level);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
@@ -152,6 +169,7 @@ ALTER TABLE public.user_badges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.emergency_alerts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.safety_scan_results ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for user_profiles
 CREATE POLICY "Users can view own profile" ON public.user_profiles
@@ -208,6 +226,19 @@ CREATE POLICY "Users can view own alerts" ON public.emergency_alerts
 CREATE POLICY "Users can update own alerts" ON public.emergency_alerts
   FOR UPDATE USING (auth.uid() = user_id);
 
+-- RLS Policies for safety_scan_results
+CREATE POLICY "Users can view own safety scans" ON public.safety_scan_results
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own safety scans" ON public.safety_scan_results
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own safety scans" ON public.safety_scan_results
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own safety scans" ON public.safety_scan_results
+  FOR DELETE USING (auth.uid() = user_id);
+
 -- Public read access for quests, badges, milestones, and guides
 CREATE POLICY "Anyone can view active quests" ON public.quests
   FOR SELECT USING (is_active = true);
@@ -241,6 +272,9 @@ CREATE TRIGGER update_quests_updated_at BEFORE UPDATE ON public.quests
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_guides_updated_at BEFORE UPDATE ON public.guides
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_safety_scan_results_updated_at BEFORE UPDATE ON public.safety_scan_results
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Function to create user profile on signup

@@ -9,7 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zith008.resqproexpo",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "This app uses the camera for safety scanning to analyze your environment for potential hazards and emergency preparedness.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save safety scan results and images."
+      }
+    },
+    "android": {
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
@@ -20,11 +29,30 @@
       "expo-router",
       "expo-font",
       "expo-web-browser",
-      "expo-llm-mediapipe",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow ResQ Pro to access your camera for safety scanning and emergency preparedness analysis."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow ResQ Pro to save safety scan images to your photo library.",
+          "savePhotosPermission": "Allow ResQ Pro to save safety scan images to your photo library.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f34e7746-f9bc-428c-8038-ca8540109c88"
+      }
     }
   }
 }

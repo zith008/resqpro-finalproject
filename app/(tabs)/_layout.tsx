@@ -18,6 +18,7 @@ export default function TabLayout() {
           backgroundColor: theme.colors.surface,
         },
         headerTintColor: theme.colors.onSurface,
+        tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
         name="home"

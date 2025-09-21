@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -20,11 +20,8 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <View style={[styles.inputContainer, { backgroundColor: theme.colors.surface }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+      <View style={styles.inputContainer}>
         <TextInput
           mode="outlined"
           placeholder="Ask about emergency preparedness..."
@@ -45,7 +42,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
           }
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -55,7 +52,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderTopWidth: 1,
     borderTopColor: '#E5E5E7',
-    backgroundColor: '#FFFFFF',
   },
   inputContainer: {
     flexDirection: 'row',
