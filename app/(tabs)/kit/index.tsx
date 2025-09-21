@@ -13,7 +13,11 @@ import {
   Radio,
   Home,
   Mountain,
-  Utensils
+  Utensils,
+  Zap,
+  Navigation,
+  Phone,
+  AlertTriangle
 } from 'lucide-react-native';
 
 interface Guide {
@@ -34,6 +38,10 @@ const iconMap = {
   home: Home,
   mountain: Mountain,
   utensils: Utensils,
+  zap: Zap,
+  navigation: Navigation,
+  phone: Phone,
+  alertTriangle: AlertTriangle,
 } as const;
 
 const guides: Guide[] = [
@@ -84,6 +92,38 @@ const guides: Guide[] = [
     category: 'Survival',
     icon: 'utensils',
     filename: 'emergency_food.md'
+  },
+  {
+    id: 'power-outage',
+    title: 'Power Outage Survival',
+    description: 'Essential tips for surviving extended power outages',
+    category: 'Safety',
+    icon: 'zap',
+    filename: 'power_outage.md'
+  },
+  {
+    id: 'navigation-basics',
+    title: 'Emergency Navigation',
+    description: 'Finding your way without GPS or modern technology',
+    category: 'Survival',
+    icon: 'navigation',
+    filename: 'navigation_basics.md'
+  },
+  {
+    id: 'emergency-contacts',
+    title: 'Emergency Contacts & Communication',
+    description: 'Who to call and how to communicate during emergencies',
+    category: 'Communication',
+    icon: 'phone',
+    filename: 'emergency_contacts.md'
+  },
+  {
+    id: 'natural-disasters',
+    title: 'Natural Disaster Preparedness',
+    description: 'Preparing for earthquakes, floods, hurricanes, and more',
+    category: 'Safety',
+    icon: 'alertTriangle',
+    filename: 'natural_disasters.md'
   }
 ];
 
@@ -192,7 +232,7 @@ export default function SurvivalKitScreen() {
                 <Card.Content style={styles.cardContent}>
                   <View style={styles.cardHeader}>
                     <View style={[
-                      styles.iconContainer,
+                      styles.guideIconContainer,
                       { backgroundColor: `${categoryColor}20` }
                     ]}>
                       <IconComponent 
@@ -323,7 +363,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  iconContainer: {
+  guideIconContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,

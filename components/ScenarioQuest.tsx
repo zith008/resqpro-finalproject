@@ -20,7 +20,7 @@ export function ScenarioQuest({ quest }: Props) {
     dailyCompletions: state.dailyCompletions
   }));
 
-  const handleOptionSelect = (optionId: string) => {
+  const handleOptionSelect = async (optionId: string) => {
     setSelectedOption(optionId);
     
     const selectedOptionData = quest.options.find((opt) => opt.id === optionId);
@@ -32,8 +32,17 @@ export function ScenarioQuest({ quest }: Props) {
       
       if (!alreadyCompleted) {
         // Only award XP if not already completed
-        completeQuest(quest.id, quest.xpValue);
-        setSnackbarMessage(`🎉 Correct! +${quest.xpValue} XP earned!`);
+        try {
+          const result = await completeQuest(quest.id, quest.xpValue);
+          let message = `🎉 Correct! +${quest.xpValue} XP earned!`;
+          if (result.levelUp) {
+            message += ` Level up! 🎉`;
+          }
+          setSnackbarMessage(message);
+        } catch (error) {
+          console.error('Failed to complete quest:', error);
+          setSnackbarMessage('🎉 Correct! (Sync error, but quest completed)');
+        }
       } else {
         setSnackbarMessage('🎉 Correct! (Already completed today)');
       }

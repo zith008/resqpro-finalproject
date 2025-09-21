@@ -33,11 +33,16 @@ export const ChecklistQuest: React.FC<Props> = ({ quest, onFinish }) => {
 
   const allDone = checks.every(c => c);
 
-  const handleFinish = () => {
-    const result = completeQuest(quest.id, quest.xpValue);
-    let msg = `🎉 Quest complete! +${quest.xpValue} XP`;
-    if (result.levelUp) msg += ' Level up!';
-    setSnackbar({ visible: true, msg });
+  const handleFinish = async () => {
+    try {
+      const result = await completeQuest(quest.id, quest.xpValue);
+      let msg = `🎉 Quest complete! +${quest.xpValue} XP`;
+      if (result.levelUp) msg += ' Level up!';
+      setSnackbar({ visible: true, msg });
+    } catch (error) {
+      console.error('Failed to complete quest:', error);
+      setSnackbar({ visible: true, msg: '🎉 Quest complete! (Sync error, but quest completed)' });
+    }
 
     setTimeout(() => router.replace('/(tabs)/home'), 2500);
   };

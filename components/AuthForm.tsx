@@ -35,8 +35,6 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
 
       if (error) {
         Alert.alert('Error', error.message)
-      } else if (isSignUp) {
-        Alert.alert('Success', 'Please check your email to confirm your account')
       } else {
         onAuthSuccess?.()
       }

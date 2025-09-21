@@ -154,28 +154,36 @@ export default function HomeScreen() {
     return inside;
   };
 
-  const handleQuestComplete = (questId: string, xpValue: number) => {
-    const result = completeQuest(questId, xpValue);
-    
-    // Trigger haptic feedback for quest completion
-    if (result.levelUp) {
-      HapticFeedback.success(); // Success haptic for level up
-    } else {
-      HapticFeedback.selection(); // Light haptic for regular completion
-    }
-    
-    // Show XP gain message
-    let message = `+${xpValue} XP earned!`;
-    if (result.levelUp) {
-      message += ` Level up! 🎉`;
-    }
-    setSnackbarMessage(message);
-    setSnackbarVisible(true);
+  const handleQuestComplete = async (questId: string, xpValue: number) => {
+    try {
+      const result = await completeQuest(questId, xpValue);
+      
+      // Trigger haptic feedback for quest completion
+      if (result.levelUp) {
+        HapticFeedback.success(); // Success haptic for level up
+      } else {
+        HapticFeedback.selection(); // Light haptic for regular completion
+      }
+      
+      // Show XP gain message
+      let message = `+${xpValue} XP earned!`;
+      if (result.levelUp) {
+        message += ` Level up! 🎉`;
+      }
+      setSnackbarMessage(message);
+      setSnackbarVisible(true);
 
-    // Show badge modal if new badge unlocked
-    if (result.newBadges.length > 0) {
-      setNewBadge(result.newBadges[0]); // Show first new badge
-      setBadgeModalVisible(true);
+      // Show badge modal if new badge unlocked
+      if (result.newBadges.length > 0) {
+        setNewBadge(result.newBadges[0]); // Show first new badge
+        setBadgeModalVisible(true);
+      }
+    } catch (error) {
+      console.error('Failed to complete quest:', error);
+      // Still show success message even if sync failed
+      setSnackbarMessage(`+${xpValue} XP earned! (Sync error, but quest completed)`);
+      setSnackbarVisible(true);
+      HapticFeedback.selection();
     }
   };
 

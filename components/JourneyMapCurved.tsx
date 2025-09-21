@@ -272,7 +272,7 @@ export const JourneyMapCurved = () => {
                     styles.icon,
                     { 
                       opacity: isCompleted ? 1 : isNext ? 0.7 : 0.4,
-                      tintColor: isCompleted ? undefined : '#999'
+                      // Remove tintColor to show original colors
                     }
                   ]}
                   resizeMode="contain"

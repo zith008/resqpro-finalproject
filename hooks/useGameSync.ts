@@ -8,26 +8,38 @@ import { useGameStore } from '../store/useGameStore'
  */
 export function useGameSync() {
   const { user, loading: authLoading, error } = useAuth()
-  const { userId, setUserId, syncToSupabase, loadFromSupabase } = useGameStore()
+  const { userId, setUserId, syncToSupabase, loadFromSupabase, clearLocalState } = useGameStore()
 
   useEffect(() => {
     const syncGameData = async () => {
       if (authLoading || error) return
 
       if (user && !userId) {
-        // User just logged in - load their data from Supabase
-        console.log('User logged in, loading data from Supabase...')
+        // User just logged in - check for local progress first
+        console.log('User logged in, checking for local progress...')
+        const currentState = useGameStore.getState()
+        const hasLocalProgress = currentState.totalXP > 0 || currentState.streak > 0 || Object.keys(currentState.dailyCompletions).length > 0
+        
         setUserId(user.id)
-        await loadFromSupabase()
+        
+        if (hasLocalProgress) {
+          // User has local progress, sync it to Supabase first
+          console.log('User has local progress, syncing to Supabase...')
+          await syncToSupabase()
+        } else {
+          // No local progress, load from Supabase
+          console.log('No local progress, loading data from Supabase...')
+          await loadFromSupabase()
+        }
       } else if (!user && userId) {
-        // User just logged out - clear userId but keep local data
-        console.log('User logged out, clearing user ID...')
-        setUserId(null)
+        // User just logged out - clear all local state
+        console.log('User logged out, clearing all local state...')
+        clearLocalState()
       }
     }
 
     syncGameData()
-  }, [user, userId, authLoading, setUserId, loadFromSupabase])
+  }, [user, userId, authLoading, setUserId, loadFromSupabase, syncToSupabase, clearLocalState])
 
   // Auto-sync to Supabase when user is logged in and data changes
   useEffect(() => {

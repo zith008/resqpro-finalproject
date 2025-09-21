@@ -23,7 +23,6 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
   const { signUp } = useAuth()
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -53,8 +52,8 @@ export default function SignupScreen() {
       if (error) {
         setError(error.message)
       } else {
-        setSuccess(true)
-        // Don't navigate automatically - user needs to check email
+        // Navigate directly to main app since email verification is disabled
+        router.replace('/(tabs)/home')
       }
     } catch (err) {
       setError('An unexpected error occurred')
@@ -67,44 +66,6 @@ export default function SignupScreen() {
     router.push('/auth/login')
   }
 
-  if (success) {
-    return (
-      <View style={styles.container}>
-        <LinearGradient
-          colors={['#ffba00', '#ff8e00']}
-          style={styles.gradientBackground}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <SafeAreaView style={styles.safeArea}>
-            <View style={styles.successContainer}>
-              <View style={styles.successIconContainer}>
-                <MaterialCommunityIcons 
-                  name="email-check" 
-                  size={80} 
-                  color="#ffffff" 
-                />
-              </View>
-              <Text style={styles.successTitle}>Check Your Email!</Text>
-              <Text style={styles.successText}>
-                We've sent you a confirmation link. Please check your email and click the link to activate your account.
-              </Text>
-              <Button
-                mode="contained"
-                onPress={goToLogin}
-                style={styles.continueButton}
-                buttonColor="#dd0436"
-                labelStyle={styles.continueButtonLabel}
-                contentStyle={styles.continueButtonContent}
-              >
-                Go to Sign In
-              </Button>
-            </View>
-          </SafeAreaView>
-        </LinearGradient>
-      </View>
-    )
-  }
 
   return (
     <View style={styles.container}>
@@ -459,48 +420,6 @@ const styles = StyleSheet.create({
     color: '#dd0436',
   },
   outlinedButtonContent: {
-    paddingVertical: 8,
-  },
-  // Success Screen Styles
-  successContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  successIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  successTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  successText: {
-    fontSize: 18,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
-    lineHeight: 26,
-    marginBottom: 40,
-    paddingHorizontal: 20,
-  },
-  continueButton: {
-    borderRadius: 12,
-    minWidth: 200,
-  },
-  continueButtonLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  continueButtonContent: {
     paddingVertical: 8,
   },
 })

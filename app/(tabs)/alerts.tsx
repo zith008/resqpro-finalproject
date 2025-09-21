@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AlertTriangle } from 'lucide-react-native';
 import { emergencyAlerts, EmergencyAlert } from '@/data/emergencyAlerts';
 import { HapticFeedback, getHapticForSeverity, getHapticForType } from '@/utils/haptics';
+import { brailleHapticService, createEmergencyAlert } from '@/services/brailleHapticService';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 
@@ -52,6 +53,56 @@ export default function AlertsScreen() {
     setAlerts(activeAlerts);
   };
 
+  const triggerBrailleHapticAlert = async (alert: EmergencyAlert) => {
+    try {
+      // Map alert type to Braille pattern
+      let brailleType: 'sos' | 'evacuation' | 'danger' | 'safe' | 'flood' | 'fire' | 'earthquake' = 'danger';
+      
+      switch (alert.type) {
+        case 'flood':
+          brailleType = 'flood';
+          break;
+        case 'tornado':
+        case 'hurricane':
+          brailleType = 'evacuation';
+          break;
+        case 'earthquake':
+          brailleType = 'earthquake';
+          break;
+        case 'wildfire':
+          brailleType = 'fire';
+          break;
+        case 'severe-weather':
+          brailleType = 'danger';
+          break;
+        default:
+          brailleType = 'danger';
+      }
+
+      // Map severity to urgency
+      let urgency: 'low' | 'medium' | 'high' | 'critical' = 'medium';
+      switch (alert.severity) {
+        case 'emergency':
+          urgency = 'critical';
+          break;
+        case 'warning':
+          urgency = 'high';
+          break;
+        case 'watch':
+          urgency = 'medium';
+          break;
+        case 'advisory':
+          urgency = 'low';
+          break;
+      }
+
+      const brailleAlert = createEmergencyAlert(brailleType, alert.title, urgency);
+      await brailleHapticService.playEmergencyAlert(brailleAlert);
+    } catch (error) {
+      console.error('Error triggering Braille haptic alert:', error);
+    }
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     loadAlerts();
@@ -93,13 +144,18 @@ export default function AlertsScreen() {
 
   const simulateNearbyEmergency = async () => {
     if (!userLocation) {
-      HapticFeedback.error();
+      // Use Braille haptic for error
+      if (brailleHapticService.isBrailleHapticsEnabled()) {
+        await brailleHapticService.playBraillePattern('danger', 1);
+      }
       alert('Location not available. Please enable location services.');
       return;
     }
 
-    // Initial haptic feedback when button is pressed
-    HapticFeedback.selection();
+    // Use Braille haptic for button press
+    if (brailleHapticService.isBrailleHapticsEnabled()) {
+      await brailleHapticService.playBraillePattern('sos', 1);
+    }
 
     // Check if user is in any alert polygon
     const nearbyAlerts = alerts.filter(alert => {
@@ -113,9 +169,8 @@ export default function AlertsScreen() {
       // Trigger notification for the most severe alert
       const mostSevereAlert = nearbyAlerts[0];
       
-      // Trigger haptic feedback based on alert type and severity
-      getHapticForType(mostSevereAlert.type)();
-      setTimeout(() => getHapticForSeverity(mostSevereAlert.severity)(), 500);
+      // Trigger Braille haptic alert
+      await triggerBrailleHapticAlert(mostSevereAlert);
       
       await Notifications.scheduleNotificationAsync({
         content: {
@@ -129,8 +184,10 @@ export default function AlertsScreen() {
       alert(`🚨 Emergency Alert Triggered!\n\n${mostSevereAlert.title}\n\n${mostSevereAlert.description}`);
     } else {
       // Simulate a nearby emergency
-      // Trigger emergency haptic pattern
-      HapticFeedback.emergency();
+      // Trigger Braille emergency pattern
+      if (brailleHapticService.isBrailleHapticsEnabled()) {
+        await brailleHapticService.playBraillePattern('sos', 3);
+      }
       
       await Notifications.scheduleNotificationAsync({
         content: {
