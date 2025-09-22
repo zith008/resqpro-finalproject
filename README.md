@@ -29,10 +29,28 @@ ResQ Pro is a comprehensive emergency preparedness mobile application that gamif
 
 ### 🤖 AI-Powered Emergency Coach
 
-- **Smart Chat Interface**: Get personalized emergency preparedness advice
-- **Room Safety Scanning**: Use camera to analyze your environment for hazards
-- **Offline AI Support**: Local AI models for when internet is unavailable
-- **Multiple AI Providers**: Support for Cactus LLM, OpenRouter, and Hugging Face
+#### **🔄 Hybrid AI System (Online + Offline)**
+
+- **Online AI (OpenRouter)**: Real-time emergency advice using Grok-4-fast model
+- **Offline AI (Qwen 2.5 1.5B)**: Local on-device AI for privacy and offline scenarios
+- **Automatic Fallback**: Seamlessly switches between online/offline modes
+- **Privacy-First**: Sensitive conversations stay on-device with local AI
+
+#### **📱 Smart Chat Interface**
+
+- **Contextual Responses**: AI understands emergency preparedness context
+- **Multi-turn Conversations**: Maintains conversation history for better advice
+- **Emergency-Specific Guidance**: Tailored responses for different disaster types
+- **Real-time Processing**: Fast response times with both AI modes
+
+#### **📸 Real-Time Room Safety Scanning**
+
+- **Camera Integration**: Use device camera to scan your environment
+- **AI-Powered Analysis**: Advanced computer vision to identify safety hazards
+- **Risk Assessment**: Automatic risk level classification (Low/Medium/High)
+- **Actionable Suggestions**: Specific recommendations to improve safety
+- **Scan History**: Track and review previous safety assessments
+- **Offline Capability**: Works without internet using local AI models
 
 ### 🚨 Real-Time Emergency Alerts
 
@@ -67,9 +85,9 @@ ResQ Pro is a comprehensive emergency preparedness mobile application that gamif
 ### Backend & Services
 
 - **Supabase** - Backend-as-a-Service (Database, Auth, Real-time)
-- **Cactus LLM** - Local AI inference
-- **OpenRouter** - AI model API access
-- **Hugging Face** - Transformers and AI models
+- **Cactus LLM** - Local AI inference with Qwen 2.5 1.5B model
+- **OpenRouter** - AI model API access (Grok-4-fast for online mode)
+- **Hugging Face** - Transformers and AI models for computer vision
 
 ### Key Libraries
 
@@ -79,6 +97,36 @@ ResQ Pro is a comprehensive emergency preparedness mobile application that gamif
 - **expo-notifications** - Push notifications
 - **zustand** - State management
 - **react-native-confetti-cannon** - Celebration animations
+
+## 🤖 AI Capabilities Deep Dive
+
+### **Online AI Mode (OpenRouter)**
+
+- **Model**: Grok-4-fast (Free tier)
+- **Features**: Real-time emergency advice, contextual responses
+- **Use Cases**: General emergency preparedness, disaster planning
+- **Response Time**: ~2-3 seconds
+- **Internet Required**: Yes
+
+### **Offline AI Mode (Cactus LLM)**
+
+- **Model**: Qwen 2.5 1.5B Instruct (GGUF format)
+- **Size**: ~1.2GB download
+- **Features**: Privacy-focused, on-device inference
+- **Use Cases**: Sensitive conversations, offline scenarios
+- **Response Time**: ~2-3 seconds first token, ~200-500ms subsequent
+- **Internet Required**: No (after initial download)
+
+### **Room Safety Scanning**
+
+- **Technology**: Computer Vision + AI Analysis
+- **Capabilities**:
+  - Hazard identification (blocked exits, fire risks, accessibility issues)
+  - Risk level assessment (Low/Medium/High)
+  - Specific safety recommendations
+  - Scan history tracking
+- **Offline Support**: Works with local AI models
+- **Storage**: Results saved to Supabase with image uploads
 
 ## 📦 Installation
 
