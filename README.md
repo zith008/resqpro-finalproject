@@ -462,6 +462,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <strong>Stay Safe, Stay Prepared! 🚨</strong>
   
   Made with ❤️ for emergency preparedness
-  
-  [Download on App Store](#) | [Get it on Google Play](#)
 </div>
