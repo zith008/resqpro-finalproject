@@ -1,9 +1,12 @@
 # 🚨 ResQ Pro - Emergency Preparedness App
 
 <div align="center">
-  <img src="./assets/images/icon.png" alt="ResQ Pro Logo" width="120" height="120">
+  <div style="display: inline-block; background: linear-gradient(135deg, #dd0436, #b8002a); border-radius: 25px; padding: 20px; box-shadow: 0 8px 20px rgba(221, 4, 54, 0.3); margin-bottom: 20px;">
+    <img src="./assets/images/resqpro-logo.png" alt="ResQ Pro Logo" width="100" height="100" style="border-radius: 15px;">
+  </div>
   
-  **Your AI-Powered Emergency Preparedness Companion**
+  <h1 style="margin: 0; color: #dd0436; font-size: 2.5em; font-weight: bold;">🚨 ResQ Pro</h1>
+  <p style="font-size: 1.2em; color: #666; margin: 10px 0 20px 0;">Your AI-Powered Emergency Preparedness Companion</p>
   
   [![Expo](https://img.shields.io/badge/Expo-53.0.22-blue.svg)](https://expo.dev/)
   [![React Native](https://img.shields.io/badge/React%20Native-0.79.5-61DAFB.svg)](https://reactnative.dev/)
