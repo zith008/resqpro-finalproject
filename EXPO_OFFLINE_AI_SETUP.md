@@ -1,38 +1,38 @@
 # 🤖 Expo-Compatible Offline AI Setup Guide
 
-## 🎯 **Staying in Expo with Gemma 3 1B Support**
+## 🎯 **Staying in Expo with Qwen 2.5 1.5B Support**
 
-This guide shows you how to use **Gemma 3 1B** (Google's latest 1B parameter model) with your Expo app while staying within the Expo ecosystem.
+This guide shows you how to use **Qwen 2.5 1.5B** (Alibaba's efficient 1.5B parameter model) with your Expo app while staying within the Expo ecosystem.
 
 ## ✅ **What We've Implemented:**
 
 ### **1. Better Package Integration**
 
-- ✅ **Installed `react-native-llm-mediapipe`** - More comprehensive than expo-llm-mediapipe
+- ✅ **Installed `cactus-react-native`** - Comprehensive LLM package for React Native
 - ✅ **Added `expo-dev-client`** - Enables native modules in Expo
-- ✅ **Graceful fallbacks** - Works with both packages
-- ✅ **Gemma 3 1B configuration** - Based on [Google AI Edge documentation](https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference)
+- ✅ **Graceful fallbacks** - Works with both local and online AI
+- ✅ **Qwen 2.5 1.5B configuration** - Based on [Cactus React Native documentation](https://github.com/cdiddy77/cactus-react-native)
 
 ### **2. Enhanced Settings Page**
 
 - ✅ **Scrollable interface** - Fixed scrolling issues
 - ✅ **Online/Offline toggle** - Switch between AI modes
 - ✅ **Model status display** - Shows download/load status
-- ✅ **Download/Load buttons** - Manage Gemma 3 1B model
+- ✅ **Download/Load buttons** - Manage Qwen 2.5 1.5B model
 - ✅ **Clear error messages** - Helpful feedback for users
 
 ### **3. Smart AI Chat Integration**
 
-- ✅ **Dual mode support** - Online (OpenRouter) + Offline (Gemma 3 1B)
+- ✅ **Dual mode support** - Online (OpenRouter) + Offline (Qwen 2.5 1.5B)
 - ✅ **Automatic switching** - Based on user preference
 - ✅ **Haptic feedback** - Enhanced user experience
 - ✅ **Error handling** - Graceful fallbacks
 
-## 🚀 **How to Use Gemma 3 1B:**
+## 🚀 **How to Use Qwen 2.5 1.5B:**
 
 ### **Step 1: Create Development Build (Required for Native Modules)**
 
-Since `react-native-llm-mediapipe` requires native modules, you need a development build:
+Since `cactus-react-native` requires native modules, you need a development build:
 
 ```bash
 # Install EAS CLI if you haven't
@@ -53,12 +53,12 @@ eas build --profile development --platform android
 2. **Install on your device** (iOS: TestFlight, Android: APK)
 3. **Open the development build** (not Expo Go)
 
-### **Step 3: Setup Gemma 3 1B Model**
+### **Step 3: Setup Qwen 2.5 1.5B Model**
 
 1. **Open your app** in the development build
 2. **Go to Settings tab**
 3. **Scroll to "🤖 AI Model Settings"**
-4. **Tap "Download Model"** (downloads Gemma 3 1B - ~1.5GB)
+4. **Tap "Download Model"** (downloads Qwen 2.5 1.5B - ~1.2GB)
 5. **Tap "Load Model"** (loads model into memory)
 6. **Toggle "Use Offline Mode"** to ON
 
@@ -66,32 +66,35 @@ eas build --profile development --platform android
 
 1. **Go to AI Coach tab**
 2. **Verify "🔒 Offline" indicator** in header
-3. **Start chatting** - All responses from Gemma 3 1B!
+3. **Start chatting** - All responses from Qwen 2.5 1.5B!
 
 ## 🔧 **Technical Details:**
 
-### **Gemma 3 1B Configuration:**
+### **Qwen 2.5 1.5B Configuration:**
 
 ```typescript
 {
-  modelName: 'gemma-3-1b-it-int4.bin',
-  modelUrl: 'https://huggingface.co/google/gemma-3-1b-it-int4/resolve/main/gemma-3-1b-it-int4.bin',
-  maxTokens: 1000,
-  temperature: 0.8,
+  modelName: 'qwen-3-1.8b-instruct',
+  modelUrl: 'https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf',
+  maxTokens: 512,
+  temperature: 0.7,
   topK: 40,
-  backend: 'cpu', // CPU backend for better compatibility
+  topP: 0.9,
+  n_ctx: 2048,
+  n_threads: 4,
+  n_gpu_layers: 0, // CPU backend for better compatibility
 }
 ```
 
 ### **Package Comparison:**
 
-| Feature                | expo-llm-mediapipe | react-native-llm-mediapipe |
-| ---------------------- | ------------------ | -------------------------- |
-| **Expo Compatibility** | ✅ Expo Go         | ❌ Requires Dev Build      |
-| **Model Support**      | Limited            | ✅ Gemma 3 1B              |
-| **Maintenance**        | Less active        | ✅ Active                  |
-| **Documentation**      | Basic              | ✅ Comprehensive           |
-| **Performance**        | Good               | ✅ Better                  |
+| Feature                | expo-llm-mediapipe | cactus-react-native   |
+| ---------------------- | ------------------ | --------------------- |
+| **Expo Compatibility** | ✅ Expo Go         | ❌ Requires Dev Build |
+| **Model Support**      | Limited            | ✅ Qwen 2.5 1.5B      |
+| **Maintenance**        | Less active        | ✅ Active             |
+| **Documentation**      | Basic              | ✅ Comprehensive      |
+| **Performance**        | Good               | ✅ Better             |
 
 ### **Why Development Build?**
 
@@ -110,7 +113,7 @@ eas build --profile development --platform android
 
 ### **✅ Latest AI Model:**
 
-- **Gemma 3 1B** - Google's newest 1B parameter model
+- **Qwen 2.5 1.5B** - Alibaba's efficient 1.5B parameter model
 - **Better reasoning** than previous models
 - **Optimized for mobile** devices
 
@@ -136,7 +139,7 @@ eas build --profile development --platform android
 
 ### **Model Download:**
 
-- **~1.5GB download** - Ensure good internet connection
+- **~1.2GB download** - Ensure good internet connection
 - **One-time download** - Model stored locally
 - **Device storage** - Ensure sufficient space
 
@@ -149,8 +152,8 @@ eas build --profile development --platform android
 ## 🎉 **Current Status:**
 
 - ✅ **Settings page scrolls properly**
-- ✅ **Better MediaPipe package installed**
-- ✅ **Gemma 3 1B configuration ready**
+- ✅ **Better Cactus package installed**
+- ✅ **Qwen 2.5 1.5B configuration ready**
 - ✅ **Development build setup guide provided**
 - ✅ **Graceful error handling implemented**
 - ✅ **Dual mode AI chat working**
@@ -159,13 +162,13 @@ eas build --profile development --platform android
 
 1. **Create development build** using EAS
 2. **Install on device** and test
-3. **Download Gemma 3 1B model** in settings
+3. **Download Qwen 2.5 1.5B model** in settings
 4. **Enable offline mode** and enjoy privacy-focused AI!
 
-**You're now ready to use the latest Gemma 3 1B model while staying fully within the Expo ecosystem!** 🤖✨
+**You're now ready to use the latest Qwen 2.5 1.5B model while staying fully within the Expo ecosystem!** 🤖✨
 
 ## 📚 **References:**
 
-- [Google AI Edge MediaPipe LLM Inference](https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference)
+- [Cactus React Native Documentation](https://github.com/cdiddy77/cactus-react-native)
 - [Expo Development Builds](https://docs.expo.dev/develop/development-builds/introduction/)
-- [react-native-llm-mediapipe](https://github.com/cdiddy77/react-native-llm-mediapipe)
+- [Qwen 2.5 Model on Hugging Face](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF)

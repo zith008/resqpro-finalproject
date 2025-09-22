@@ -13,6 +13,8 @@ Notifications.setNotificationHandler({
       shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
     };
   },
 });
@@ -27,10 +29,10 @@ async function handleBrailleNotification(notification: Notifications.Notificatio
     let urgency: 'low' | 'medium' | 'high' | 'critical' = 'medium';
     
     // Check notification data for alert type
-    if (data?.alertType) {
-      brailleType = data.alertType;
-    } else if (data?.type) {
-      brailleType = data.type;
+    if (data?.alertType && typeof data.alertType === 'string') {
+      brailleType = data.alertType as typeof brailleType;
+    } else if (data?.type && typeof data.type === 'string') {
+      brailleType = data.type as typeof brailleType;
     } else {
       // Infer from title/body content
       const content = `${title || ''} ${body || ''}`.toLowerCase();
@@ -57,9 +59,9 @@ async function handleBrailleNotification(notification: Notifications.Notificatio
     }
     
     // Check notification data for urgency
-    if (data?.urgency) {
-      urgency = data.urgency;
-    } else if (data?.severity) {
+    if (data?.urgency && typeof data.urgency === 'string') {
+      urgency = data.urgency as typeof urgency;
+    } else if (data?.severity && typeof data.severity === 'string') {
       switch (data.severity) {
         case 'emergency':
           urgency = 'critical';
